@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+</head>
+<body>
+    <div>
+        <header>
+            <h2>
+                SignUp
+            </h2>
+        </header>
+    
+        <form id="signUpForm">
+            <label for="nameLabel">Name</label>
+            <input type="text" name="name" id="name" class="signup" required>
+    
+            <label for="emailLabel">Email</label>
+            <input type="email" name="email" id="email" class="signup" required>
+    
+            <label for="phoneLabel">Phone Number</label>
+            <input type="tel" name="phnum" id="phnum" class="signup" required>
+    
+            <label for="passLabel">Password</label>
+            <input type="password" name="password" id="password" class="signup" required>
+    
+            <input type="submit" name="submitSignUp" id="submitSignUp" class="signup">
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="signUp.js"></script>
+</body>
+</html>
