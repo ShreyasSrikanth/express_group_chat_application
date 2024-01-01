@@ -4,15 +4,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
+
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            justify-content: center;
+            align-items: center;
+            background-color: burlywood;
+        }
+
+        #header{
+            text-align: center;
+            background-color: cadetblue;
+            color: antiquewhite;
+            border-radius: 10px;
+            height: 35px;
+        }
+
+        #formDiv {
+            padding: 20px;
+            text-align: -webkit-center;
+        }
+
+        #signUpForm {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 27%;
+            color: brown;
+            font-weight: bold;
+        }
+
+        #signUpForm label {
+            display: flex;
+            width: 100%;
+            font-size: large;
+        }
+
+        #signUpForm input[type="text"],
+        #signUpForm input[type="email"],
+        #signUpForm input[type="tel"],
+        #signUpForm input[type="password"] {
+            width: 95%;
+            margin-bottom: 13px;
+            border-radius: 20px;
+            height: 23px;
+        }
+
+        #signUpForm input[type=submit] {
+            background: indianred;
+            font-size: small;
+            width: 100px;
+            margin-left: 0;
+            border-radius: 20px;
+            height: 27px;
+            border: none;
+            font-weight: 700;
+        }
+
+        #signUpForm input[type=submit]:active {
+            background: rgb(146, 70, 70);
+            transform: translateY(2px);
+        }
+
+        @media only screen and (max-width: 768px) {
+            #signUpForm {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 72%;
+        }
+        }
+    </style>
 </head>
 <body>
-    <div>
+    <div id="header">
         <header>
             <h2>
                 SignUp
             </h2>
         </header>
+    </div>
     
+    <div id="formDiv">
         <form id="signUpForm">
             <label for="nameLabel">Name</label>
             <input type="text" name="name" id="name" class="signup" required>
@@ -20,7 +95,7 @@
             <label for="emailLabel">Email</label>
             <input type="email" name="email" id="email" class="signup" required>
     
-            <label for="phoneLabel">Phone Number</label>
+            <label for="phoneLabel">Phone</label>
             <input type="tel" name="phnum" id="phnum" class="signup" required>
     
             <label for="passLabel">Password</label>
@@ -29,6 +104,7 @@
             <input type="submit" name="submitSignUp" id="submitSignUp" class="signup">
         </form>
     </div>
+    
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="signUp.js"></script>
