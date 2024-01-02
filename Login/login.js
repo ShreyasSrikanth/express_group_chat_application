@@ -13,4 +13,15 @@ async function userAuthentication(e) {
 
     document.getElementById('email').value = "";
     document.getElementById('password').value = "";
+
+    try {
+
+        await axios.post("http://localhost:3000/users/login",{
+            email:email,
+            pass:pass
+        }) 
+
+    } catch (err) {
+        console.log(err);
+    }
 }

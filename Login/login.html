@@ -65,7 +65,24 @@
             font-weight: 700;
         }
 
+        #loginForm input[type=button] {
+            background: indianred;
+            font-size: small;
+            width: 100px;
+            margin-left: 0;
+            margin-top: 10px;
+            border-radius: 20px;
+            height: 27px;
+            border: none;
+            font-weight: 700;
+        }
+
         #loginForm input[type=submit]:active {
+            background: rgb(146, 70, 70);
+            transform: translateY(2px);
+        }
+
+        #loginForm input[type=button]:active {
             background: rgb(146, 70, 70);
             transform: translateY(2px);
         }
@@ -113,9 +130,13 @@
             <label for="passLabel">Password</label>
             <input type="password" name="password" id="password" class="login" required>
     
-            <input type="submit" name="submitSignUp" id="submitSignUp" class="login">
+            <input type="submit" name="loginSignUp" id="loginSignUp" class="login">
+
+            <input type="button" name="signUpButton" id="signUpButton" class="login" value="Sign up">
         </form>
     </div>
+
+    
 
 
     <div id="welcomeTexts">
