@@ -7,8 +7,27 @@ async function sendSignUpDetails(e){
 
     let name = document.getElementById('name').value;
     let email = document.getElementById('email').value;
-    let phnum = document.getElementById('phnum').value;
-    let password = document.getElementById('password').value;
+    let phone = document.getElementById('phnum').value;
+    let pass = document.getElementById('password').value;
 
-    console.log(name);
+    try{
+        await axios.post('http://localhost:3000/users/signup', {
+            name: name,
+            email: email,
+            phone: phone,
+            pass: pass
+        }).then(res=>{
+            console.log("response",res)
+            alert("Email succesfully registered");
+        })
+    } catch (err) {
+        console.log("=====>",err.response.status);
+        let status = err.response.status
+        if(status === 404){
+            alert("Email already registered");
+        } else if(status === 500){
+            alert("Server crashed")
+        }
+        
+    }
 }
