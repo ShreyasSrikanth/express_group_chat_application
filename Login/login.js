@@ -1,6 +1,12 @@
 let loginForm = document.getElementById('loginForm');
+let signupButton = document.getElementById('signUpButton');
 
-loginForm.addEventListener('submit',userAuthentication)
+loginForm.addEventListener('submit',userAuthentication);
+signupButton.addEventListener('click',signUpRedirect);
+
+function signUpRedirect() {
+    window.location.href = "../SignUp/signUp.html";
+}
 
 async function userAuthentication(e) {
     e.preventDefault();
