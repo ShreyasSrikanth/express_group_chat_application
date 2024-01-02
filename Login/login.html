@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            justify-content: center;
+            align-items: center;
+            background-color: burlywood;
+            overflow: hidden;
+        }
+
+        #header{
+            text-align: center;
+            background-color: cadetblue;
+            color: antiquewhite;
+            border-radius: 10px;
+            height: 5%;
+        }
+
+        #formDiv {
+            padding: 20px;
+            text-align: -webkit-center;
+            height: 40%;
+        }
+
+        #loginForm {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 27%;
+            color: brown;
+            font-weight: bold;
+        }
+
+        #loginForm label {
+            display: flex;
+            width: 100%;
+            font-size: large;
+        }
+
+        #loginForm input[type="text"],
+        #loginForm input[type="email"],
+        #loginForm input[type="tel"],
+        #loginForm input[type="password"] {
+            width: 95%;
+            margin-bottom: 13px;
+            border-radius: 20px;
+            height: 23px;
+        }
+
+        #loginForm input[type=submit] {
+            background: indianred;
+            font-size: small;
+            width: 100px;
+            margin-left: 0;
+            border-radius: 20px;
+            height: 27px;
+            border: none;
+            font-weight: 700;
+        }
+
+        #loginForm input[type=submit]:active {
+            background: rgb(146, 70, 70);
+            transform: translateY(2px);
+        }
+
+        #welcomeTexts {
+            height: 100%;
+            background: beige
+        }
+
+        h2{
+            font-style: italic;
+        }
+        
+        p{
+            text-align: center;
+            font-size: larger;
+            font-style: italic;
+        }
+
+        @media only screen and (max-width: 768px) {
+            #loginForm {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 72%;
+        }
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <header>
+            <h2>
+                Login
+            </h2>
+        </header>
+    </div>
+    
+    <div id="formDiv">
+        <form id="loginForm">
+    
+            <label for="emailLabel">Email</label>
+            <input type="email" name="email" id="email" class="login" required>
+    
+            <label for="passLabel">Password</label>
+            <input type="password" name="password" id="password" class="login" required>
+    
+            <input type="submit" name="submitSignUp" id="submitSignUp" class="login">
+        </form>
+    </div>
+
+
+    <div id="welcomeTexts">
+        <h2>"Ready to Sign up ??"</h2>
+
+        <p>"Chat, share, and connect with like-minded individuals."</p>
+    </div>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>
