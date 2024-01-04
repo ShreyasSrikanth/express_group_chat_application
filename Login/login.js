@@ -14,9 +14,6 @@ async function userAuthentication(e) {
     let email = document.getElementById('email').value;
     let pass = document.getElementById('password').value;
 
-    console.log("====>",email);
-    console.log("====>",pass);
-
     document.getElementById('email').value = "";
     document.getElementById('password').value = "";
 
@@ -26,11 +23,16 @@ async function userAuthentication(e) {
             email:email,
             pass:pass
         }).then(res => {
-            console.log("====>",res)
+            alert("Login succesful")
             window.location.href = "../ChatApp/chat.html";
         })
 
     } catch (err) {
-        console.log(err);
+        let status = err.response.status
+        if(status === 404){
+            alert("Invalid email or password");
+        } else if(status === 500){
+            alert("Server crashed")
+        }
     }
 }
