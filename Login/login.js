@@ -14,6 +14,8 @@ async function userAuthentication(e) {
     let email = document.getElementById('email').value;
     let pass = document.getElementById('password').value;
 
+    localStorage.setItem("Email",email)
+
     document.getElementById('email').value = "";
     document.getElementById('password').value = "";
 
