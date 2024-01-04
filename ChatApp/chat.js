@@ -1,4 +1,7 @@
 let chats = document.getElementById('chats');
+let chatButton = document.getElementById("ChatButton")
+
+chatButton.addEventListener("click",storeMessagestoBackend)
 
 async function fetchUsers(){
     let response = await axios.get("http://localhost:3000/users/fetchusers")
@@ -40,3 +43,16 @@ async function fetchUsers(){
 }
 
 fetchUsers()
+
+async function storeMessagestoBackend(){
+    let text = document.getElementById('text').value;
+    let token = localStorage.getItem("token")
+
+    let response = await axios.post(`http://localhost:3000/message/storechat`,{
+        message: text
+    },{
+        headers: {
+            'Authorization': token
+        }
+    })
+}
