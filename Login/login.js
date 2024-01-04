@@ -25,7 +25,10 @@ async function userAuthentication(e) {
         await axios.post("http://localhost:3000/users/login",{
             email:email,
             pass:pass
-        }) 
+        }).then(res => {
+            console.log("====>",res)
+            window.location.href = "../ChatApp/chat.html";
+        })
 
     } catch (err) {
         console.log(err);

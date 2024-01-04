@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>we chat</title>
+</head>
+<style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        justify-content: center;
+        align-items: center;
+        background-color: burlywood;
+        overflow: hidden;
+    }
+
+    #header {
+        text-align: center;
+        background-color: cadetblue;
+        color: antiquewhite;
+        border-radius: 10px;
+        height: 5%;
+    }
+
+    #chatParent {
+        height: 90%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    #chats {
+        height: 80%;
+        width: 80%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(250, 235, 215, 0.781);
+    }
+
+    #textbox {
+        margin-top: 1%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        border: 2px solid;
+        border-radius: 5px;
+        width: 80%;
+        height: 4vh;
+    }
+
+    #text {
+        flex: 1;
+        border: none;
+        outline: none;
+        padding: 8px;
+        border-radius: 5px;
+    }
+
+    #ChatButton {
+        border: none;
+        outline: none;
+        background-color: cadetblue;
+        color: antiquewhite;
+        padding: 8px 12px;
+        margin-left: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    @media only screen and (max-width: 768px) {
+        #chats {
+            height: 80%;
+            margin-top: 0%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(250, 235, 215, 0.781);
+        }
+        #textbox {
+            margin-top: 1%;
+            width: 99%;
+            height: 4vh;
+        }
+    }
+
+</style>
+<body>
+    <div id="header">
+        <header>
+            <h2>
+                Chats
+            </h2>
+        </header>
+    </div>
+
+    <div id="chatParent">
+        <div id="chats">
+
+        </div>
+
+        <div id="textbox">
+            <input type="text" id="text" name="text">
+            <input type="button" id="ChatButton" name="ChatButton" value=">">
+        </div>
+    </div>
+
+    
+    
+</body>
+</html>
