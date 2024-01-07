@@ -1,7 +1,31 @@
 let chats = document.getElementById('chats');
 let chatButton = document.getElementById("ChatButton");
+let loadAllMessage = document.getElementById("oldmessage");
+let loadNewMessage = document.getElementById("newmessage")
+let NewMessage;
+let AllMessage;
 
-chatButton.addEventListener("click",storeMessagestoBackend)
+chatButton.addEventListener("click",storeMessagestoBackend);
+loadNewMessage.addEventListener("click",fetchNewMessages);
+
+async function fetchAllMessages(){
+    clearInterval(NewMessage);
+    AllMessage = setInterval(async()=>{
+        getMessagesfromBackend()
+    },1000)
+}
+
+loadAllMessage.addEventListener("click",fetchAllMessages);
+
+async function fetchNewMessages(){
+    clearInterval(AllMessage);
+    console.log("hello")
+    appendNewMessage()
+
+    NewMessage = setInterval(async()=>{
+        appendNewMessage()
+    },1000)
+}
 
 async function fetchUsers(){
     let response = await axios.get("http://localhost:3000/users/fetchusers")
@@ -44,7 +68,7 @@ async function fetchUsers(){
 
     appendNewMessage()
 
-    setInterval(async()=>{
+    NewMessage = setInterval(async()=>{
         appendNewMessage()
     },1000)
 }
@@ -76,18 +100,25 @@ async function storeMessagestoBackend(){
 }
 
 async function appendNewMessage() {
+    
     let token = localStorage.getItem("token");
     let response = await axios.get(`http://localhost:3000/message/getNewMessage`, {
         headers: {
             'Authorization': token
         }
     });
+    
     localStorage.setItem("recent", JSON.stringify(response.data.newMessage));
     displayLastTenMessages(response);
 }
 
 async function getMessagesfromBackend() {
     try {
+        // let chatDisplay = document.getElementById("chatText");
+        // let ul = document.createElement('ul');
+    
+        // chatDisplay.innerHTML = "";
+
         let token = localStorage.getItem("token");
         let response = await axios.get(`http://localhost:3000/message/getmessages`, {
             headers: {
@@ -95,12 +126,12 @@ async function getMessagesfromBackend() {
             }
         });
 
-        let messages = response.data.message;
-        let users = response.data.user;
-        let currentUserId = response.data.currentUserId;
+        let messages = response.data.message.reverse();
+        // let users = response.data.user;
+        // let currentUserId = response.data.currentUserId;
 
-        let lastTenMessages = messages.slice(-10);
-        localStorage.setItem("recent", JSON.stringify(lastTenMessages));
+        // let lastTenMessages = messages.slice();
+        localStorage.setItem("recent", JSON.stringify(messages));
 
         displayLastTenMessages(response);
     } catch (error) {
@@ -110,9 +141,15 @@ async function getMessagesfromBackend() {
 
 function displayLastTenMessages(response) {
     let chatDisplay = document.getElementById("chatText");
+    let chats = document.getElementById("chats");
     let ul = document.createElement('ul');
 
+    let userName;
+    let userMessage;
+
+    // Clear chat display and ul before appending new messages
     chatDisplay.innerHTML = "";
+    ul.innerHTML = "";
 
     let newMessageString = localStorage.getItem("recent");
     let newMessage = JSON.parse(newMessageString);
@@ -120,9 +157,7 @@ function displayLastTenMessages(response) {
 
     newMessage.forEach((message) => {
         let li = document.createElement('li');
-        let userName;
-        let userMessage;
-
+        
         if (message.UserId === response.data.currentUserId) {
             userName = "You";
             userMessage = message.message;
@@ -149,5 +184,6 @@ function displayLastTenMessages(response) {
     chatDisplay.appendChild(ul);
     document.getElementById("chats").appendChild(chatDisplay);
 }
+
 
 
