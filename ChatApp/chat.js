@@ -41,8 +41,11 @@ async function fetchUsers(){
         ul.appendChild(li);
         chatDisplay.appendChild(ul)
     });
-    getMessagesfromBackend();
+    setInterval(async()=>{
+        getMessagesfromBackend()
+    },1000)
 }
+
 
 fetchUsers()
 
@@ -120,7 +123,5 @@ async function getMessagesfromBackend() {
         chatDisplay.appendChild(ul);
         chats.appendChild(chatDisplay);
     });
-
-    // Append the ul with all messages to the chat display outside the loop
     
 }
