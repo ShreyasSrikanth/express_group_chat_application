@@ -41,8 +41,11 @@ async function fetchUsers(){
         ul.appendChild(li);
         chatDisplay.appendChild(ul)
     });
+
+    getMessagesfromBackend()
+
     setInterval(async()=>{
-        getMessagesfromBackend()
+        appendNewMessage()
     },1000)
 }
 
@@ -66,62 +69,85 @@ async function storeMessagestoBackend(){
         })
 
         document.getElementById('text').value = "";
-        getMessagesfromBackend();
     }
-    
+    // setInterval(async()=>{
+    //     getMessagesfromBackend()
+    // },1000)
 }
 
-async function getMessagesfromBackend() {
+async function appendNewMessage() {
     let token = localStorage.getItem("token");
-    let response = await axios.get(`http://localhost:3000/message/getmessages`, {
+    let response = await axios.get(`http://localhost:3000/message/getNewMessage`, {
         headers: {
             'Authorization': token
         }
     });
+    localStorage.setItem("recent", JSON.stringify(response.data.newMessage));
+    displayLastTenMessages(response);
+}
 
-    let messages = response.data.message;
-    let users = response.data.user;
-    let currentUserId = response.data.currentUserId;
-    let chats = document.getElementById("chats");
+async function getMessagesfromBackend() {
+    try {
+        let token = localStorage.getItem("token");
+        let response = await axios.get(`http://localhost:3000/message/getmessages`, {
+            headers: {
+                'Authorization': token
+            }
+        });
+
+        let messages = response.data.message;
+        let users = response.data.user;
+        let currentUserId = response.data.currentUserId;
+
+        let lastTenMessages = messages.slice(-10);
+        localStorage.setItem("recent", JSON.stringify(lastTenMessages));
+
+        displayLastTenMessages(response);
+    } catch (error) {
+        console.error("Error fetching messages:", error);
+    }
+}
+
+function displayLastTenMessages(response) {
     let chatDisplay = document.getElementById("chatText");
     let ul = document.createElement('ul');
 
-    chatDisplay.innerHTML="";
+    chatDisplay.innerHTML = "";
 
-    messages.forEach((message, index) => {
+    let newMessageString = localStorage.getItem("recent");
+    let newMessage = JSON.parse(newMessageString);
+    newMessage = newMessage.reverse();
+
+    newMessage.forEach((message) => {
         let li = document.createElement('li');
         let userName;
         let userMessage;
 
-        if (message.UserId === currentUserId) {
+        if (message.UserId === response.data.currentUserId) {
             userName = "You";
             userMessage = message.message;
         } else {
-            users.forEach((user, index) => {
-                if (user.id === message.UserId) {
-                    userName = user.name;
-                    userMessage = message.message;
-                }
-            });
+            if (response.data.user && Array.isArray(response.data.user)) {
+                let user = response.data.user.find(user => user.id === message.UserId);
+                userName = user ? user.name : "Unknown";
+            } else {
+                userName = "Unknown";
+            }
+            userMessage = message.message;
         }
 
-        li.textContent = userName + ": " + userMessage;
-        if(index % 2 == 0){
-            li.style.backgroundColor="#CCCCCC";
-            li.style.width="88%"
-            li.style.borderRadius = "4px"
-        } else {
-            li.style.backgroundColor= "#FFFFFF";
-            li.style.width="88%"
-            li.style.borderRadius = "4px"
-        }
-
-        li.style.marginBottom = "1%"
-        li.style.listStyleType = "none"
+        li.textContent = `${userName}: ${userMessage}`;
+        li.style.backgroundColor = ul.children.length % 2 === 0 ? "#CCCCCC" : "#FFFFFF";
+        li.style.width = "88%";
+        li.style.borderRadius = "4px";
+        li.style.marginBottom = "1%";
+        li.style.listStyleType = "none";
 
         ul.appendChild(li);
-        chatDisplay.appendChild(ul);
-        chats.appendChild(chatDisplay);
     });
-    
+
+    chatDisplay.appendChild(ul);
+    document.getElementById("chats").appendChild(chatDisplay);
 }
+
+
