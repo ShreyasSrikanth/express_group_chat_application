@@ -1,5 +1,5 @@
 let chats = document.getElementById('chats');
-let chatButton = document.getElementById("ChatButton")
+let chatButton = document.getElementById("ChatButton");
 
 chatButton.addEventListener("click",storeMessagestoBackend)
 
@@ -42,7 +42,7 @@ async function fetchUsers(){
         chatDisplay.appendChild(ul)
     });
 
-    getMessagesfromBackend()
+    appendNewMessage()
 
     setInterval(async()=>{
         appendNewMessage()
