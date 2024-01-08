@@ -1,6 +1,6 @@
 let chats = document.getElementById('chats');
 let chatButton = document.getElementById("ChatButton");
-let chatText = document.getElementById("chatText");
+let chatDisplay = document.getElementById("chatText");
 let textField = document.getElementById('textField');
 
 let loadAllMessage = document.getElementById("oldmessage");
@@ -50,6 +50,8 @@ async function storeMessagestoBackend() {
 loadNewMessage.addEventListener("click", fetchNewMessages);
 
 async function fetchNewMessages() {
+    loadNewMessage.disabled = true;
+    loadAllMessage.disabled = false;
         clearInterval(AllMessage);
         appendNewMessage()
 
@@ -61,6 +63,8 @@ async function fetchNewMessages() {
 loadAllMessage.addEventListener("click", fetchAllMessages);
 
 async function fetchAllMessages() {
+    loadNewMessage.disabled = false; 
+    loadAllMessage.disabled = true; 
         clearInterval(NewMessage);
         AllMessage = setInterval(async () => {
                 getMessagesfromBackend()
@@ -74,7 +78,8 @@ closeForm.addEventListener('click', function() {
 });
 
 textField.addEventListener('click', function() {
-    chatText.style.display = 'block';
+    chatDisplay.style.display = 'none';
+    chats.innerHTML="";
 });
 
 async function fetchUsers() {
@@ -156,8 +161,6 @@ async function getMessagesfromBackend() {
 }
 
 function displayLastTenMessages(response) {
-        let chatDisplay = document.getElementById("chatText");
-        let chats = document.getElementById("chats");
         let ul = document.createElement('ul');
 
         chatDisplay.innerHTML = "";
