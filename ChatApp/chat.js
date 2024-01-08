@@ -1,17 +1,20 @@
 let chats = document.getElementById('chats');
 let chatButton = document.getElementById("ChatButton");
-let chatfield = document.getElementById('textField');
+let chatText = document.getElementById("chatText");
+let textField = document.getElementById('textField');
 
 let loadAllMessage = document.getElementById("oldmessage");
 let loadNewMessage = document.getElementById("newmessage");
 
 let groupButton = document.getElementById("createGroup");
 const overlay = document.getElementById("overlay");
+
 const groupForm = document.getElementById("groupForm");
 const closeForm = document.getElementById("closeForm");
 
 let NewMessage;
 let AllMessage;
+
 let userName;
 let userMessage;
 
@@ -70,8 +73,8 @@ closeForm.addEventListener('click', function() {
         overlay.style.display = "none";
 });
 
-chatfield.addEventListener('click', function() {
-        chats.style.display = 'block';
+textField.addEventListener('click', function() {
+    chatText.style.display = 'block';
 });
 
 async function fetchUsers() {

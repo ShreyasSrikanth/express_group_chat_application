@@ -44,8 +44,11 @@
       }
       #textField{
       height: 6%;
-      font-size: large;
-      background-color:rgb(155, 138, 138)
+      font-size: medium;
+      background-color:rgb(155, 138, 138);
+      display: flex;
+      justify-content: center; /* Horizontally center */
+      align-items: center;
       }
       #chats {
       height: 100%;
@@ -105,7 +108,7 @@
       }
       #oldmessage{
       border-radius: 4px;
-      font-size: x-small;
+      font-size: small;
       border: none;
       background-color: rgb(175, 110, 24);
       transition: background-color 0.3s ease;
@@ -116,13 +119,26 @@
       }
       #newmessage{
       border-radius: 4px;
-      font-size: x-small;
+      font-size: small;
       border: none;
       background-color: rgb(175, 110, 24);
       transition: background-color 0.3s ease;
       margin-top: 4px;
+      margin-bottom: 4px;
       }
       #newmessage:hover {
+      cursor: pointer;
+      background-color: sandybrown;
+      }
+      #sendgrpInfo{
+      border-radius: 4px;
+      font-size: x-small;
+      border: none;
+      background-color: burlywood;
+      transition: background-color 0.3s ease;
+      margin-bottom: 5px;
+      }
+      #sendgrpInfo:hover {
       cursor: pointer;
       background-color: sandybrown;
       }
@@ -145,6 +161,13 @@
       padding: 20px;
       border-radius: 5px;
       z-index: 10000;
+      }
+      #groupFormButtons{
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        margin-top: 5px;
       }
       @media only screen and (max-width: 768px) {
       #chats {
@@ -189,14 +212,21 @@
             <div id="chatBar">
                <h3>Chats</h3>
                <div id="textField">
-                  <p>chats</p>
+                  <p style="margin-top: 5px;">chats</p>
                </div>
                <input type="button" id="createGroup" name="createGroup" value="Create Group">
             </div>
             <div id="overlay"style="display: none;">
                <div id="groupForm" >
                   <form id="createForm">
-                     <input type="button" id="closeForm" name="closeForm" value="close form">
+                     <div id ="groupName">
+                        <label for="grpName">Group Name</label>
+                        <input type="text" name="grpText" id="grpText" placeholder="Group Name">
+                     </div>
+                     <div id="groupFormButtons">
+                        <input type="button" id="sendgrpInfo" name="sendgrpInfo" value="submit">
+                        <input type="button" id="closeForm" name="closeForm" value="close form">
+                     </div>
                   </form>
                </div>
             </div>
