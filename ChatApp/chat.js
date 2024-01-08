@@ -1,189 +1,197 @@
 let chats = document.getElementById('chats');
 let chatButton = document.getElementById("ChatButton");
+let chatfield = document.getElementById('textField');
+
 let loadAllMessage = document.getElementById("oldmessage");
-let loadNewMessage = document.getElementById("newmessage")
+let loadNewMessage = document.getElementById("newmessage");
+
+let groupButton = document.getElementById("createGroup");
+const overlay = document.getElementById("overlay");
+const groupForm = document.getElementById("groupForm");
+const closeForm = document.getElementById("closeForm");
+
 let NewMessage;
 let AllMessage;
+let userName;
+let userMessage;
 
-chatButton.addEventListener("click",storeMessagestoBackend);
-loadNewMessage.addEventListener("click",fetchNewMessages);
+groupButton.addEventListener('click', createGroups);
 
-async function fetchAllMessages(){
-    clearInterval(NewMessage);
-    AllMessage = setInterval(async()=>{
-        getMessagesfromBackend()
-    },1000)
+function createGroups(event) {
+        event.preventDefault();
+        overlay.style.display = "block";
 }
 
-loadAllMessage.addEventListener("click",fetchAllMessages);
+chatButton.addEventListener("click", storeMessagestoBackend);
 
-async function fetchNewMessages(){
-    clearInterval(AllMessage);
-    console.log("hello")
-    appendNewMessage()
+async function storeMessagestoBackend() {
+        let text = document.getElementById('text').value;
+        let token = localStorage.getItem("token");
+        let count = localStorage.getItem("userCount");
 
-    NewMessage = setInterval(async()=>{
-        appendNewMessage()
-    },1000)
-}
-
-async function fetchUsers(){
-    let response = await axios.get("http://localhost:3000/users/fetchusers")
-    localStorage.setItem("userCount",response.data.userCount)
-    let newUsers = response.data.users
-    let ul = document.createElement('ul');
-
-    newUsers.forEach((user,index) => {
-        let currentUserEmail = localStorage.getItem("Email");
-        let chatDisplay = document.getElementById("chats");
-        let currentUser;
-
-        
-        let li = document.createElement('li');
-
-        if(user.email === currentUserEmail){
-            currentUser = "You"
+        if (count === "1") {
+                alert("No users to send messages")
         } else {
-            currentUser = user.name;
+                let response = await axios.post(`http://localhost:3000/message/storechat`, {
+                        message: text
+                }, {
+                        headers: {
+                                'Authorization': token
+                        }
+                })
+
+                document.getElementById('text').value = "";
         }
+}
 
-        li.textContent = currentUser + " " + "joined";
+loadNewMessage.addEventListener("click", fetchNewMessages);
 
-        if(index % 2 == 0){
-            li.style.backgroundColor="#CCCCCC";
-            li.style.width="88%"
-            li.style.borderRadius = "4px"
-        } else {
-            li.style.backgroundColor= "#FFFFFF";
-            li.style.width="88%"
-            li.style.borderRadius = "4px"
-        }
-
-        li.style.marginBottom = "1%"
-        li.style.listStyleType = "none"
-
-        ul.appendChild(li);
-        chatDisplay.appendChild(ul)
-    });
-
-    appendNewMessage()
-
-    NewMessage = setInterval(async()=>{
+async function fetchNewMessages() {
+        clearInterval(AllMessage);
         appendNewMessage()
-    },1000)
+
+        NewMessage = setInterval(async () => {
+                appendNewMessage()
+        }, 1000)
+}
+
+loadAllMessage.addEventListener("click", fetchAllMessages);
+
+async function fetchAllMessages() {
+        clearInterval(NewMessage);
+        AllMessage = setInterval(async () => {
+                getMessagesfromBackend()
+        }, 1000)
 }
 
 
-fetchUsers()
 
-async function storeMessagestoBackend(){
-    let text = document.getElementById('text').value;
-    let token = localStorage.getItem("token");
-    let count = localStorage.getItem("userCount");
+closeForm.addEventListener('click', function() {
+        overlay.style.display = "none";
+});
 
-    if(count==="1"){
-        alert("No users to send messages")
-    } else {
-        let response = await axios.post(`http://localhost:3000/message/storechat`,{
-            message: text
-        },{
-            headers: {
-                'Authorization': token
-            }
-        })
+chatfield.addEventListener('click', function() {
+        chats.style.display = 'block';
+});
 
-        document.getElementById('text').value = "";
-    }
-    // setInterval(async()=>{
-    //     getMessagesfromBackend()
-    // },1000)
+async function fetchUsers() {
+        let response = await axios.get("http://localhost:3000/users/fetchusers")
+        localStorage.setItem("userCount", response.data.userCount)
+        let newUsers = response.data.users
+        let ul = document.createElement('ul');
+
+        newUsers.forEach((user, index) => {
+                let currentUserEmail = localStorage.getItem("Email");
+                let chatDisplay = document.getElementById("chats");
+                let currentUser;
+
+
+                let li = document.createElement('li');
+
+                if (user.email === currentUserEmail) {
+                        currentUser = "You"
+                } else {
+                        currentUser = user.name;
+                }
+
+                li.textContent = currentUser + " " + "joined";
+
+                if (index % 2 == 0) {
+                        li.style.backgroundColor = "#CCCCCC";
+                        li.style.width = "88%"
+                        li.style.borderRadius = "4px"
+                } else {
+                        li.style.backgroundColor = "#FFFFFF";
+                        li.style.width = "88%"
+                        li.style.borderRadius = "4px"
+                }
+
+                li.style.marginBottom = "1%"
+                li.style.listStyleType = "none"
+
+                ul.appendChild(li);
+                chatDisplay.appendChild(ul)
+        });
+
+        appendNewMessage()
+
+        NewMessage = setInterval(async () => {
+                appendNewMessage()
+        }, 1000)
 }
 
 async function appendNewMessage() {
-    
-    let token = localStorage.getItem("token");
-    let response = await axios.get(`http://localhost:3000/message/getNewMessage`, {
-        headers: {
-            'Authorization': token
-        }
-    });
-    
-    localStorage.setItem("recent", JSON.stringify(response.data.newMessage));
-    displayLastTenMessages(response);
+
+        let token = localStorage.getItem("token");
+        let response = await axios.get(`http://localhost:3000/message/getNewMessage`, {
+                headers: {
+                        'Authorization': token
+                }
+        });
+
+        localStorage.setItem("recent", JSON.stringify(response.data.newMessage));
+        displayLastTenMessages(response);
 }
 
 async function getMessagesfromBackend() {
-    try {
-        // let chatDisplay = document.getElementById("chatText");
-        // let ul = document.createElement('ul');
-    
-        // chatDisplay.innerHTML = "";
+        try {
+                let token = localStorage.getItem("token");
+                let response = await axios.get(`http://localhost:3000/message/getmessages`, {
+                        headers: {
+                                'Authorization': token
+                        }
+                });
 
-        let token = localStorage.getItem("token");
-        let response = await axios.get(`http://localhost:3000/message/getmessages`, {
-            headers: {
-                'Authorization': token
-            }
-        });
+                let messages = response.data.message.reverse();
+                localStorage.setItem("recent", JSON.stringify(messages));
 
-        let messages = response.data.message.reverse();
-        // let users = response.data.user;
-        // let currentUserId = response.data.currentUserId;
+                displayLastTenMessages(response);
 
-        // let lastTenMessages = messages.slice();
-        localStorage.setItem("recent", JSON.stringify(messages));
-
-        displayLastTenMessages(response);
-    } catch (error) {
-        console.error("Error fetching messages:", error);
-    }
+        } catch (error) {
+                console.error("Error fetching messages:", error);
+        }
 }
 
 function displayLastTenMessages(response) {
-    let chatDisplay = document.getElementById("chatText");
-    let chats = document.getElementById("chats");
-    let ul = document.createElement('ul');
+        let chatDisplay = document.getElementById("chatText");
+        let chats = document.getElementById("chats");
+        let ul = document.createElement('ul');
 
-    let userName;
-    let userMessage;
+        chatDisplay.innerHTML = "";
+        ul.innerHTML = "";
 
-    // Clear chat display and ul before appending new messages
-    chatDisplay.innerHTML = "";
-    ul.innerHTML = "";
+        let newMessageString = localStorage.getItem("recent");
+        let newMessage = JSON.parse(newMessageString);
+        newMessage = newMessage.reverse();
 
-    let newMessageString = localStorage.getItem("recent");
-    let newMessage = JSON.parse(newMessageString);
-    newMessage = newMessage.reverse();
+        newMessage.forEach((message) => {
+                let li = document.createElement('li');
 
-    newMessage.forEach((message) => {
-        let li = document.createElement('li');
-        
-        if (message.UserId === response.data.currentUserId) {
-            userName = "You";
-            userMessage = message.message;
-        } else {
-            if (response.data.user && Array.isArray(response.data.user)) {
-                let user = response.data.user.find(user => user.id === message.UserId);
-                userName = user ? user.name : "Unknown";
-            } else {
-                userName = "Unknown";
-            }
-            userMessage = message.message;
-        }
+                if (message.UserId === response.data.currentUserId) {
+                        userName = "You";
+                        userMessage = message.message;
+                } else {
+                        if (response.data.user && Array.isArray(response.data.user)) {
+                                let user = response.data.user.find(user => user.id === message.UserId);
+                                userName = user ? user.name : "Unknown";
+                        } else {
+                                userName = "Unknown";
+                        }
+                        userMessage = message.message;
+                }
 
-        li.textContent = `${userName}: ${userMessage}`;
-        li.style.backgroundColor = ul.children.length % 2 === 0 ? "#CCCCCC" : "#FFFFFF";
-        li.style.width = "88%";
-        li.style.borderRadius = "4px";
-        li.style.marginBottom = "1%";
-        li.style.listStyleType = "none";
+                li.textContent = `${userName}: ${userMessage}`;
+                li.style.backgroundColor = ul.children.length % 2 === 0 ? "#CCCCCC" : "#FFFFFF";
+                li.style.width = "88%";
+                li.style.borderRadius = "4px";
+                li.style.marginBottom = "1%";
+                li.style.listStyleType = "none";
 
-        ul.appendChild(li);
-    });
+                ul.appendChild(li);
+        });
 
-    chatDisplay.appendChild(ul);
-    document.getElementById("chats").appendChild(chatDisplay);
+        chatDisplay.appendChild(ul);
+        chats.appendChild(chatDisplay);
 }
 
-
-
+fetchUsers();
