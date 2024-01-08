@@ -6,10 +6,12 @@ let textField = document.getElementById('textField');
 let loadAllMessage = document.getElementById("oldmessage");
 let loadNewMessage = document.getElementById("newmessage");
 
+let groupForm = document.getElementById('groupForm');
 let groupButton = document.getElementById("createGroup");
 const overlay = document.getElementById("overlay");
+const groupFormDiv = document.getElementById("groupFormDiv");
+const addGroupMembers = document.getElementById('addGroupMembers');
 
-const groupForm = document.getElementById("groupForm");
 const closeForm = document.getElementById("closeForm");
 
 let NewMessage;
@@ -20,9 +22,63 @@ let userMessage;
 
 groupButton.addEventListener('click', createGroups);
 
-function createGroups(event) {
-        event.preventDefault();
-        overlay.style.display = "block";
+async function createGroups(event) {
+    event.preventDefault();
+    overlay.style.display = "block";
+
+    let response = await fetchUsers();
+    let groupMembers = response.data.users;
+
+    let ul = document.createElement('ul'); 
+    groupMembers.forEach((user) => {
+        let li = document.createElement('li'); 
+        let userName = document.createTextNode(user.name);
+        let addButton = document.createElement('button');
+        addButton.textContent = 'Add';
+
+        let groupuser = user.name;
+        let groupuserId = user.id;
+        let isBackgroundGreen = false;
+
+        addButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log(`User ${groupuser} and ${groupuserId} added.`);
+            
+            if (isBackgroundGreen) {
+                li.style.backgroundColor = ''; 
+                addButton.textContent = 'Add';
+                groupuser = user.name
+                groupuserId = user.id;
+            } else {
+                li.style.backgroundColor = 'green'; 
+                addButton.textContent = 'Remove';
+                groupuser = "";
+                groupuserId = "";
+            }
+        
+            isBackgroundGreen = !isBackgroundGreen;
+        });
+
+        li.style.display="flex";
+        li.style.justifyContent="space-between";
+        li.style.width="100%";
+        li.style.marginBottom="10px";
+
+        addButton.style.backgroundColor="rgb(175, 110, 24)"
+        addButton.style.border="none";
+        addButton.style.fontSize="x-small"
+        addButton.style.color='white';
+        addButton.style.borderRadius="5px";
+        addButton.style.height="15px";
+
+        li.appendChild(userName);
+        li.appendChild(addButton);
+        ul.appendChild(li);
+    });
+
+    let membersContainer = document.getElementById('members');
+    membersContainer.innerHTML = '';
+    membersContainer.appendChild(ul);
 }
 
 chatButton.addEventListener("click", storeMessagestoBackend);
@@ -82,15 +138,20 @@ textField.addEventListener('click', function() {
     chats.innerHTML="";
 });
 
+
 async function fetchUsers() {
-        let response = await axios.get("http://localhost:3000/users/fetchusers")
-        localStorage.setItem("userCount", response.data.userCount)
-        let newUsers = response.data.users
+    let response = await axios.get("http://localhost:3000/users/fetchusers")
+    localStorage.setItem("userCount", response.data.userCount)
+    return response
+}
+
+async function displayUsers() {
+        let response = await fetchUsers();
+        let newUsers = response.data.users;
         let ul = document.createElement('ul');
 
         newUsers.forEach((user, index) => {
                 let currentUserEmail = localStorage.getItem("Email");
-                let chatDisplay = document.getElementById("chats");
                 let currentUser;
 
 
@@ -118,7 +179,7 @@ async function fetchUsers() {
                 li.style.listStyleType = "none"
 
                 ul.appendChild(li);
-                chatDisplay.appendChild(ul)
+                chats.appendChild(ul)
         });
 
         appendNewMessage()
@@ -200,4 +261,4 @@ function displayLastTenMessages(response) {
         chats.appendChild(chatDisplay);
 }
 
-fetchUsers();
+displayUsers();

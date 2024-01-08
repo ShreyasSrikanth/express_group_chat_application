@@ -152,7 +152,7 @@
       background-color: rgba(0, 0, 0, 0.5); 
       z-index: 9999;
       }
-      #groupForm {
+      #groupFormDiv {
       position: absolute;
       top: 50%;
       left: 50%;
@@ -206,39 +206,63 @@
          </header>
       </div>
       <div id="chatParent">
+        
          <input type="button" id="oldmessage" name="oldmessage" value="Load Older Messages">
          <input type="button" id="newmessage" name="newmessage" value="Load Newer Messages">
+
          <div id="chatField">
+
             <div id="chatBar">
                <h3>Chats</h3>
+
                <div id="textField">
                   <p style="margin-top: 5px;">chats</p>
                </div>
+
                <input type="button" id="createGroup" name="createGroup" value="Create Group">
             </div>
+
             <div id="overlay"style="display: none;">
-               <div id="groupForm" >
-                  <form id="createForm">
+               <div id="groupFormDiv" >
+                  <form id="groupForm">
+
                      <div id ="groupName">
                         <label for="grpName">Group Name</label>
                         <input type="text" name="grpText" id="grpText" placeholder="Group Name">
                      </div>
+
+                     <div id="addGroupMembers">
+                        <h3>
+                            Add Members
+                        </h3>
+                        <div id="members">
+                            
+                        </div>
+                     </div>
+
                      <div id="groupFormButtons">
                         <input type="button" id="sendgrpInfo" name="sendgrpInfo" value="submit">
                         <input type="button" id="closeForm" name="closeForm" value="close form">
                      </div>
+
                   </form>
                </div>
             </div>
+
             <div id="chats">
+
                <div id="chatText">
+
                </div>
+
             </div>
          </div>
+
          <div id="textbox">
             <input type="text" id="text" name="text">
             <input type="button" id="ChatButton" name="ChatButton" value=">">
          </div>
+
       </div>
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
       <script src="chat.js"></script>
