@@ -11,14 +11,21 @@ let groupButton = document.getElementById("createGroup");
 const overlay = document.getElementById("overlay");
 const groupFormDiv = document.getElementById("groupFormDiv");
 const addGroupMembers = document.getElementById('addGroupMembers');
+const sendgrpInfo = document.getElementById('sendgrpInfo');
+let GroupChats = document.getElementById('groups');
+let groupUserIds;
 
 const closeForm = document.getElementById("closeForm");
 
 let NewMessage;
+let NewGroupMessage;
 let AllMessage;
 
 let userName;
 let userMessage;
+let groups = [];
+let chatgroupusers;
+let normalchats = true;
 
 groupButton.addEventListener('click', createGroups);
 
@@ -29,59 +36,160 @@ async function createGroups(event) {
     let response = await fetchUsers();
     let groupMembers = response.data.users;
 
-    let ul = document.createElement('ul'); 
-    groupMembers.forEach((user) => {
-        let li = document.createElement('li'); 
-        let userName = document.createTextNode(user.name);
-        let addButton = document.createElement('button');
-        addButton.textContent = 'Add';
+    let ul = document.createElement('ul');     
 
-        let groupuser = user.name;
+groupMembers.forEach((user) => {
+    let li = document.createElement('li'); 
+    let userName = document.createTextNode(user.name);
+    let addButton = document.createElement('button');
+    addButton.textContent = 'Add';
+
+    
+    let isBackgroundGreen = false;
+
+    addButton.addEventListener('click', function(e) {
+        e.preventDefault();
         let groupuserId = user.id;
-        let isBackgroundGreen = false;
-
-        addButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log(`User ${groupuser} and ${groupuserId} added.`);
-            
-            if (isBackgroundGreen) {
-                li.style.backgroundColor = ''; 
-                addButton.textContent = 'Add';
-                groupuser = user.name
-                groupuserId = user.id;
-            } else {
-                li.style.backgroundColor = 'green'; 
-                addButton.textContent = 'Remove';
-                groupuser = "";
-                groupuserId = "";
-            }
         
-            isBackgroundGreen = !isBackgroundGreen;
-        });
+        if (isBackgroundGreen) {
+            li.style.backgroundColor = ''; 
+            addButton.textContent = 'Add';
+            groups.pop(groupuserId)
 
-        li.style.display="flex";
-        li.style.justifyContent="space-between";
-        li.style.width="100%";
-        li.style.marginBottom="10px";
-
-        addButton.style.backgroundColor="rgb(175, 110, 24)"
-        addButton.style.border="none";
-        addButton.style.fontSize="x-small"
-        addButton.style.color='white';
-        addButton.style.borderRadius="5px";
-        addButton.style.height="15px";
-
-        li.appendChild(userName);
-        li.appendChild(addButton);
-        ul.appendChild(li);
+        } else {
+            li.style.backgroundColor = 'green'; 
+            addButton.textContent = 'Remove';
+            groups.push(groupuserId);
+        }
+        isBackgroundGreen = !isBackgroundGreen;
     });
+    
+    
+    li.style.display = "flex";
+    li.style.justifyContent = "space-between";
+    li.style.width = "100%";
+    li.style.marginBottom = "10px";
 
+    addButton.style.backgroundColor = "rgb(175, 110, 24)";
+    addButton.style.border = "none";
+    addButton.style.fontSize = "x-small";
+    addButton.style.color = 'white';
+    addButton.style.borderRadius = "5px";
+    addButton.style.height = "15px";
+
+    li.appendChild(userName);
+    li.appendChild(addButton);
+    ul.appendChild(li);
+});
     let membersContainer = document.getElementById('members');
     membersContainer.innerHTML = '';
     membersContainer.appendChild(ul);
 }
 
-chatButton.addEventListener("click", storeMessagestoBackend);
+sendgrpInfo.addEventListener('click',userGroups)
+
+async function userGroups(){
+    let token = localStorage.getItem("token");
+    let groupName = document.getElementById('grpName').value;
+
+
+    let response = await axios.post(`http://localhost:3000/groups/createGroups`,{
+        groupName:groupName,
+        groupUsers:groups
+    },{
+        headers:{
+            'Authorization':token
+        }
+    })
+
+    if(response.status===200){
+        alert(response.data.message)
+        console.log(response.data.newGroup)
+    }
+}
+
+// GroupChats.addEventListener('click',displaygroupMessages);
+
+
+
+async function fetchUserGroup() {
+    let token = localStorage.getItem("token");
+    let response = await axios.get(`http://localhost:3000/groups/fetchgroups`, {
+        headers: {
+            'Authorization': token
+        }
+    });
+
+    response.data.groups.forEach(group => {
+        const groupDiv = document.createElement('div');
+        groupDiv.textContent = `${group.groupname}`;
+        localStorage.setItem(groupDiv.textContent, group.id);
+        groupDiv.classList.add('group-name');
+        GroupChats.appendChild(groupDiv);
+
+        groupDiv.addEventListener('click', async function() {
+            const groupName = this.textContent;
+            let groupId = localStorage.getItem(groupName);
+            await displayGroupUsers(groupName, groupId);
+        });
+    });
+
+    groupUserIds = response.data.groups;
+}
+
+let usergroup
+
+async function displayGroupUsers(groupName, groupId){
+        clearInterval(AllMessage);
+        clearInterval(NewMessage);
+        chats.innerHTML=""
+    
+        normalchats = false;
+    
+        let token = localStorage.getItem("token");
+    
+        let response = await axios.get(`http://localhost:3000/groups/fetchgroupUsers?groupId=${groupId}`, {
+            headers: {
+                'Authorization': token
+            }
+        });
+    
+        console.log(response.data.groupmembers);
+        chatgroupusers = response.data.groupmembers;
+    
+        displayUsers();
+}
+
+
+
+chatButton.addEventListener("click",sendMesssage);
+
+async function sendMesssage(){
+        if(normalchats===true){
+                await storeMessagestoBackend();
+        } else {
+                await storeGroupMessages()
+        }
+}
+
+async function storeGroupMessages(){
+        let text = document.getElementById('text').value;
+        let token = localStorage.getItem("token");
+        let groupId = chatgroupusers[0].UserGroup.groupId;
+        
+        let response = await axios.post(`http://localhost:3000/groupmessageRoute/fetchgroupUsers`, {
+                message: text,
+                groupId:groupId
+        },{
+                headers: {
+                        'Authorization': token
+                }
+        })
+        document.getElementById('text').value = "";
+        console.log(response)
+}
+
+
 
 async function storeMessagestoBackend() {
         let text = document.getElementById('text').value;
@@ -91,17 +199,20 @@ async function storeMessagestoBackend() {
         if (count === "1") {
                 alert("No users to send messages")
         } else {
-                let response = await axios.post(`http://localhost:3000/message/storechat`, {
-                        message: text
-                }, {
-                        headers: {
-                                'Authorization': token
-                        }
-                })
+
+        let response = await axios.post(`http://localhost:3000/message/storechat`, {
+                message: text
+        }, {
+                headers: {
+                        'Authorization': token
+                }
+        })
 
                 document.getElementById('text').value = "";
         }
 }
+
+
 
 loadNewMessage.addEventListener("click", fetchNewMessages);
 
@@ -109,11 +220,22 @@ async function fetchNewMessages() {
     loadNewMessage.disabled = true;
     loadAllMessage.disabled = false;
         clearInterval(AllMessage);
-        appendNewMessage()
-
-        NewMessage = setInterval(async () => {
+        if(normalchats===true){
+                clearInterval(NewGroupMessage);
                 appendNewMessage()
-        }, 1000)
+        
+                NewMessage = setInterval(async () => {
+                        appendNewMessage()
+                }, 1000)
+            } else{
+                clearInterval(NewGroupMessage);
+                clearInterval(NewMessage);
+                appendGroupMessage()
+        
+                NewGroupMessage = setInterval(async () => {
+                        appendGroupMessage()
+                }, 1000)
+            }
 }
 
 loadAllMessage.addEventListener("click", fetchAllMessages);
@@ -134,9 +256,15 @@ closeForm.addEventListener('click', function() {
 });
 
 textField.addEventListener('click', function() {
-    chatDisplay.style.display = 'none';
+    chatDisplay.style.display = 'block';
     chats.innerHTML="";
+    normalchats = true;
+    clearInterval(NewGroupMessage);
+    clearInterval(NewMessage);
+    displayUsers();
 });
+
+
 
 
 async function fetchUsers() {
@@ -146,8 +274,19 @@ async function fetchUsers() {
 }
 
 async function displayUsers() {
-        let response = await fetchUsers();
-        let newUsers = response.data.users;
+        let response1 = await fetchUsers();
+        let response2 = chatgroupusers;
+        let newUsers;
+        
+        if(normalchats===true){
+            newUsers = response1.data.users;
+        } else {
+            newUsers = response2
+        }
+
+        
+        let groupUsers = response2;
+
         let ul = document.createElement('ul');
 
         newUsers.forEach((user, index) => {
@@ -181,23 +320,54 @@ async function displayUsers() {
                 ul.appendChild(li);
                 chats.appendChild(ul)
         });
-
+        
+    if(normalchats===true){
+        clearInterval(NewGroupMessage);
         appendNewMessage()
 
         NewMessage = setInterval(async () => {
                 appendNewMessage()
         }, 1000)
+    } else{
+        clearInterval(NewGroupMessage);
+        clearInterval(NewMessage);
+        appendGroupMessage()
+
+        NewGroupMessage = setInterval(async () => {
+                appendGroupMessage()
+        }, 1000)
+    }
+        
 }
 
 async function appendNewMessage() {
 
         let token = localStorage.getItem("token");
-        let response = await axios.get(`http://localhost:3000/message/getNewMessage`, {
+        let response = await axios.get(`http://localhost:3000/message/getNewMessage/`, {
                 headers: {
                         'Authorization': token
                 }
         });
 
+        localStorage.setItem("recent", JSON.stringify(response.data.newMessage));
+        displayLastTenMessages(response);
+}
+
+
+async function appendGroupMessage() {
+
+        console.log("hello dev")
+
+        let token = localStorage.getItem("token");
+        let groupId = chatgroupusers[0].UserGroup.groupId;
+
+        let response = await axios.get(`http://localhost:3000/groupmessageRoute/fetchgroupmessages?groupId=${groupId}`, {
+                headers: {
+                        'Authorization': token
+                }
+        });
+
+        console.log(response)
         localStorage.setItem("recent", JSON.stringify(response.data.newMessage));
         displayLastTenMessages(response);
 }
@@ -231,34 +401,64 @@ function displayLastTenMessages(response) {
         let newMessage = JSON.parse(newMessageString);
         newMessage = newMessage.reverse();
 
-        newMessage.forEach((message) => {
-                let li = document.createElement('li');
-
-                if (message.UserId === response.data.currentUserId) {
-                        userName = "You";
-                        userMessage = message.message;
-                } else {
-                        if (response.data.user && Array.isArray(response.data.user)) {
-                                let user = response.data.user.find(user => user.id === message.UserId);
-                                userName = user ? user.name : "Unknown";
+        if(normalchats===true){
+                newMessage.forEach((message) => {
+                        let li = document.createElement('li');
+        
+                        if (message.UserId === response.data.currentUserId) {
+                                userName = "You";
+                                userMessage = message.message;
                         } else {
-                                userName = "Unknown";
+                                if (response.data.user && Array.isArray(response.data.user)) {
+                                        let user = response.data.user.find(user => user.id === message.UserId);
+                                        userName = user ? user.name : "Unknown";
+                                } else {
+                                        userName = "Unknown";
+                                }
+                                userMessage = message.message;
                         }
-                        userMessage = message.message;
-                }
+        
+                        li.textContent = `${userName}: ${userMessage}`;
+                        li.style.backgroundColor = ul.children.length % 2 === 0 ? "#CCCCCC" : "#FFFFFF";
+                        li.style.width = "88%";
+                        li.style.borderRadius = "4px";
+                        li.style.marginBottom = "1%";
+                        li.style.listStyleType = "none";
+        
+                        ul.appendChild(li);
+                });
+        
+        } else {
+                newMessage.forEach((message) => {
+                        let li = document.createElement('li');
 
-                li.textContent = `${userName}: ${userMessage}`;
-                li.style.backgroundColor = ul.children.length % 2 === 0 ? "#CCCCCC" : "#FFFFFF";
-                li.style.width = "88%";
-                li.style.borderRadius = "4px";
-                li.style.marginBottom = "1%";
-                li.style.listStyleType = "none";
-
-                ul.appendChild(li);
-        });
-
+                        if (message.UserId === response.data.currentUserId) {
+                                userName = "You";
+                                userMessage = message.message;
+                        } else {
+                                console.log(message.UserId , "and" , message.User.id)
+                                if (message.UserId === message.User.id) {
+                                        userName = message.User.name;
+                                } else {
+                                        userName = "Unknown";
+                                }
+                                userMessage = message.message;
+                        }
+        
+                        li.textContent = `${userName}: ${userMessage}`;
+                        li.style.backgroundColor = ul.children.length % 2 === 0 ? "#CCCCCC" : "#FFFFFF";
+                        li.style.width = "88%";
+                        li.style.borderRadius = "4px";
+                        li.style.marginBottom = "1%";
+                        li.style.listStyleType = "none";
+        
+                        ul.appendChild(li);
+                })
+        }
+ 
         chatDisplay.appendChild(ul);
         chats.appendChild(chatDisplay);
 }
 
 displayUsers();
+fetchUserGroup();

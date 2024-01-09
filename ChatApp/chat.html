@@ -169,6 +169,15 @@
         flex-direction: column;
         margin-top: 5px;
       }
+      .group-name {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .group-name:hover {
+      background-color: #f5f5f5;
+    }
       @media only screen and (max-width: 768px) {
       #chats {
       height: 100%;
@@ -211,12 +220,16 @@
          <input type="button" id="newmessage" name="newmessage" value="Load Newer Messages">
 
          <div id="chatField">
-
+            
             <div id="chatBar">
                <h3>Chats</h3>
 
                <div id="textField">
                   <p style="margin-top: 5px;">chats</p>
+               </div>
+
+               <div id="groups">
+
                </div>
 
                <input type="button" id="createGroup" name="createGroup" value="Create Group">
@@ -228,7 +241,7 @@
 
                      <div id ="groupName">
                         <label for="grpName">Group Name</label>
-                        <input type="text" name="grpText" id="grpText" placeholder="Group Name">
+                        <input type="text" name="grpName" id="grpName" placeholder="Group Name">
                      </div>
 
                      <div id="addGroupMembers">
