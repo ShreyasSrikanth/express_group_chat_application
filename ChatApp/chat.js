@@ -20,7 +20,7 @@ const closeForm = document.getElementById("closeForm");
 let NewMessage;
 let NewGroupMessage;
 let AllMessage;
-
+let NewAllGroupMessage;
 let userName;
 let userMessage;
 let groups = [];
@@ -154,7 +154,7 @@ async function displayGroupUsers(groupName, groupId){
             }
         });
     
-        console.log(response.data.groupmembers);
+        // console.log(response.data.groupmembers);
         chatgroupusers = response.data.groupmembers;
     
         displayUsers();
@@ -186,7 +186,6 @@ async function storeGroupMessages(){
                 }
         })
         document.getElementById('text').value = "";
-        console.log(response)
 }
 
 
@@ -220,8 +219,11 @@ async function fetchNewMessages() {
     loadNewMessage.disabled = true;
     loadAllMessage.disabled = false;
         clearInterval(AllMessage);
+        clearInterval(NewAllGroupMessage)
         if(normalchats===true){
                 clearInterval(NewGroupMessage);
+                clearInterval(NewMessage);
+
                 appendNewMessage()
         
                 NewMessage = setInterval(async () => {
@@ -230,7 +232,8 @@ async function fetchNewMessages() {
             } else{
                 clearInterval(NewGroupMessage);
                 clearInterval(NewMessage);
-                appendGroupMessage()
+
+                appendGroupMessage();
         
                 NewGroupMessage = setInterval(async () => {
                         appendGroupMessage()
@@ -244,9 +247,25 @@ async function fetchAllMessages() {
     loadNewMessage.disabled = false; 
     loadAllMessage.disabled = true; 
         clearInterval(NewMessage);
-        AllMessage = setInterval(async () => {
-                getMessagesfromBackend()
-        }, 1000)
+        clearInterval(NewGroupMessage);
+       
+        if(normalchats===true){
+                clearInterval(AllMessage);
+                clearInterval(NewAllGroupMessage);
+
+                getMessagesfromBackend();
+                AllMessage = setInterval(async () => {
+                        getMessagesfromBackend()
+                }, 1000)
+        } else {
+                clearInterval(AllMessage);
+                clearInterval(NewAllGroupMessage);
+
+                getAllGroupMessagesfromBackend();
+                NewAllGroupMessage = setInterval(async () => {
+                        getAllGroupMessagesfromBackend();
+                }, 1000)
+        }
 }
 
 
@@ -340,23 +359,30 @@ async function displayUsers() {
         
 }
 
-async function appendNewMessage() {
 
-        let token = localStorage.getItem("token");
-        let response = await axios.get(`http://localhost:3000/message/getNewMessage/`, {
-                headers: {
-                        'Authorization': token
-                }
-        });
 
-        localStorage.setItem("recent", JSON.stringify(response.data.newMessage));
-        displayLastTenMessages(response);
+async function getAllGroupMessagesfromBackend() {
+        try {
+                let token = localStorage.getItem("token");
+                let groupId = chatgroupusers[0].UserGroup.groupId;
+
+                let response = await axios.get(`http://localhost:3000/groupmessageRoute/fetchallgroupmessages?groupId=${groupId}`, {
+                        headers: {
+                                'Authorization': token
+                        }
+                });
+                
+                localStorage.setItem("recent", JSON.stringify(response.data.newMessage));
+
+                displayLastTenMessages(response);
+
+        } catch (error) {
+                console.error("Error fetching all group messages:", error);
+        }
 }
 
 
 async function appendGroupMessage() {
-
-        console.log("hello dev")
 
         let token = localStorage.getItem("token");
         let groupId = chatgroupusers[0].UserGroup.groupId;
@@ -367,9 +393,9 @@ async function appendGroupMessage() {
                 }
         });
 
-        console.log(response)
         localStorage.setItem("recent", JSON.stringify(response.data.newMessage));
         displayLastTenMessages(response);
+
 }
 
 async function getMessagesfromBackend() {
@@ -391,6 +417,19 @@ async function getMessagesfromBackend() {
         }
 }
 
+async function appendNewMessage() {
+
+        let token = localStorage.getItem("token");
+        let response = await axios.get(`http://localhost:3000/message/getNewMessage/`, {
+                headers: {
+                        'Authorization': token
+                }
+        });
+
+        localStorage.setItem("recent", JSON.stringify(response.data.newMessage));
+        displayLastTenMessages(response);
+}
+
 function displayLastTenMessages(response) {
         let ul = document.createElement('ul');
 
@@ -404,7 +443,6 @@ function displayLastTenMessages(response) {
         if(normalchats===true){
                 newMessage.forEach((message) => {
                         let li = document.createElement('li');
-        
                         if (message.UserId === response.data.currentUserId) {
                                 userName = "You";
                                 userMessage = message.message;
@@ -436,7 +474,6 @@ function displayLastTenMessages(response) {
                                 userName = "You";
                                 userMessage = message.message;
                         } else {
-                                console.log(message.UserId , "and" , message.User.id)
                                 if (message.UserId === message.User.id) {
                                         userName = message.User.name;
                                 } else {
