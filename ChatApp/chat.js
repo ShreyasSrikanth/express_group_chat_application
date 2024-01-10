@@ -26,6 +26,7 @@ let userMessage;
 let groups = [];
 let chatgroupusers;
 let normalchats = true;
+let groupAdmin;
 
 groupButton.addEventListener('click', createGroups);
 
@@ -156,6 +157,7 @@ async function displayGroupUsers(groupName, groupId){
     
         // console.log(response.data.groupmembers);
         chatgroupusers = response.data.groupmembers;
+        groupAdmin = response.data.groupadminId
     
         displayUsers();
 }
@@ -321,7 +323,16 @@ async function displayUsers() {
                         currentUser = user.name;
                 }
 
-                li.textContent = currentUser + " " + "joined";
+                if(normalchats===true){
+                        li.textContent = currentUser + " " + "joined";
+                } else{
+                        if (user.id===groupAdmin){
+                                li.textContent = currentUser + " "  + "                   "+"admin" ;
+                        } else {
+                                li.textContent = currentUser + " " + "joined"
+                        }
+                }
+
 
                 if (index % 2 == 0) {
                         li.style.backgroundColor = "#CCCCCC";
