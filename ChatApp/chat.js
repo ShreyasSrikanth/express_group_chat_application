@@ -327,9 +327,28 @@ async function displayUsers() {
                         li.textContent = currentUser + " " + "joined";
                 } else{
                         if (user.id===groupAdmin){
-                                li.textContent = currentUser + " "  + "                   "+"admin" ;
+                                li.textContent = `${currentUser} admin`;
                         } else {
-                                li.textContent = currentUser + " " + "joined"
+                                let token = localStorage.getItem('groupId');
+                                let groupId = chatgroupusers[0].UserGroup.groupId;
+                                li.textContent = `${currentUser} joined`;
+                                console.log("groupId",groupId)
+                                let removeButton = document.createElement('button');
+                                removeButton.textContent = 'Remove';
+                                removeButton.addEventListener('click', async () => {
+                                        let response = await axios.post(`http://localhost:3000/groups/removegroupuser`, {
+                                                userId:user.id,
+                                                groupadminId:groupAdmin,
+                                                groupId:groupId
+                                        }, {
+                                                headers: {
+                                                        'Authorization': token
+                                                }
+                                        })
+                                    console.log('Remove button clicked for user:', response);
+                                });
+                        
+                                li.appendChild(removeButton);
                         }
                 }
 
