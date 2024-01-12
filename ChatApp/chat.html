@@ -106,6 +106,17 @@
       cursor: pointer;
       background-color: sandybrown;
       }
+      #closeFormInv{
+      border-radius: 4px;
+      font-size: x-small;
+      border: none;
+      background-color: burlywood;
+      transition: background-color 0.3s ease;
+      }
+      #closeFormInv:hover {
+      cursor: pointer;
+      background-color: sandybrown;
+      }
       #oldmessage{
       border-radius: 4px;
       font-size: small;
@@ -142,7 +153,29 @@
       cursor: pointer;
       background-color: sandybrown;
       }
+      #sendgrpInfoInv{
+      border-radius: 4px;
+      font-size: x-small;
+      border: none;
+      background-color: burlywood;
+      transition: background-color 0.3s ease;
+      margin-bottom: 5px;
+      }
+      #sendgrpInfoInv:hover {
+      cursor: pointer;
+      background-color: sandybrown;
+      }
       #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); 
+      z-index: 9999;
+      }
+      #overlayInvite {
       display: none;
       position: fixed;
       top: 0;
@@ -162,7 +195,25 @@
       border-radius: 5px;
       z-index: 10000;
       }
+      #groupInvFormDiv {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      z-index: 10000;
+      width:22%
+      }
       #groupFormButtons{
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        margin-top: 5px;
+      }
+      #groupInvFormButtons{
         justify-content: center;
         align-items: center;
         display: flex;
@@ -203,6 +254,17 @@
       width: 35%;
       background-color: mistyrose;
       text-align: center;
+      }
+      #groupInvFormDiv {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      z-index: 10000;
+      width:60%
       }
       }
    </style>
@@ -262,16 +324,44 @@
                </div>
             </div>
 
+            <div id="overlayInvite"style="display: none;">
+               <div id="groupInvFormDiv" >
+                  <form id="groupFormInv">
+
+                     <div id="inviteGroupMembers">
+                        <h3>
+                            Invite Members
+                        </h3>
+                        <div id="invitemembers">
+                            
+                        </div>
+                     </div>
+
+                     <div id="groupInvFormButtons">
+                        <input type="button" id="sendgrpInfoInv" name="sendgrpInfoInv" value="submit">
+                        <input type="button" id="closeFormInv" name="closeFormInv" value="close form">
+                     </div>
+
+                  </form>
+               </div>
+            </div>
+
             <div id="chats">
 
                <div id="chatText">
 
                </div>
 
+               
+
             </div>
+         </div>
+         <div id="inviteUserButton">
+            <input type="button" id="invite" name="invite" value="Invite User">
          </div>
 
          <div id="textbox">
+            
             <input type="text" id="text" name="text">
             <input type="button" id="ChatButton" name="ChatButton" value=">">
          </div>
