@@ -329,7 +329,7 @@ async function displayUsers() {
                         if (user.id===groupAdmin){
                                 li.textContent = `${currentUser} admin`;
                         } else {
-                                let token = localStorage.getItem('groupId');
+                                let token = localStorage.getItem('token');
                                 let groupId = chatgroupusers[0].UserGroup.groupId;
                                 li.textContent = `${currentUser} joined`;
                                 console.log("groupId",groupId)
